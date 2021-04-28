@@ -15,13 +15,15 @@ from utils.flat_dataset import FlatFolderDataset
 from utils.sampler import InfiniteSamplerWrapper
 from utils.utils import *
 
-cudnn.benchmark = True # benchmark mode is faster
+cudnn.benchmark = True  # benchmark mode is faster
 Image.MAX_IMAGE_PIXELS = None  # Disable DecompressionBombError
-ImageFile.LOAD_TRUNCATED_IMAGES = True  # Disable OSError: image file is truncated
-device = torch.device('cuda') # use GPU for training
+# Disable OSError: image file is truncated
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+device = torch.device('cuda')  # use GPU for training
 
 # argument parser (makes life easier)
-parser = argparse.ArgumentParser(description="training arguments", prog="train")
+parser = argparse.ArgumentParser(
+    description="training arguments", prog="train")
 
 # Basic options
 parser.add_argument('--content_dir', type=str, default='data/train2017',
@@ -43,6 +45,11 @@ parser.add_argument('--n_threads', type=int, default=2)
 parser.add_argument('--save_model_interval', type=int, default=1000)
 parser.add_argument('--start_iter', type=float, default=0)
 
+# make sure the datasets have been downloaded
+if (not os.path.exists("data/content") or not os.path.exists("data/style")):
+    print("Downloading Data...")
+    download_data()
+
 # parse args
 args = parser.parse_args('')
 
@@ -52,13 +59,13 @@ decoder = decoder_arch
 vgg = vgg_arch
 
 
-vgg.load_state_dict(torch.load(args.vgg)) # load pretrained vgg network
-vgg = nn.Sequential(*list(vgg.children())[:44]) # extract layers until relu5_1
+vgg.load_state_dict(torch.load(args.vgg))  # load pretrained vgg network
+vgg = nn.Sequential(*list(vgg.children())[:44])  # extract layers until relu5_1
 
 # create and config main net
 network = Net(vgg, decoder, args.start_iter)
-network.train() # set network to training mode
-network.to(device) # move network to GPU
+network.train()  # set network to training mode
+network.to(device)  # move network to GPU
 
 # get image transformations
 content_tf = train_transform()
@@ -71,45 +78,51 @@ style_dataset = FlatFolderDataset(args.style_dir, style_tf)
 # make training datasets
 content_iter = iter(data.DataLoader(
     content_dataset, batch_size=args.batch_size,
-    sampler= InfiniteSamplerWrapper(content_dataset),
+    sampler=InfiniteSamplerWrapper(content_dataset),
     num_workers=args.n_threads))
 style_iter = iter(data.DataLoader(
     style_dataset, batch_size=args.batch_size,
-    sampler= InfiniteSamplerWrapper(style_dataset),
+    sampler=InfiniteSamplerWrapper(style_dataset),
     num_workers=args.n_threads))
 
 # set up optimizer (optimizing both networks losses)
 optimizer = optim.Adam([
-                              {'params': network.decoder.parameters()},
-                              {'params': network.transform.parameters()}], lr=args.lr)
+    {'params': network.decoder.parameters()},
+    {'params': network.transform.parameters()}], lr=args.lr)
 
 # load optimizer state if not training from the begining
 if(args.start_iter > 0):
-    optimizer.load_state_dict(torch.load('optimizer_iter_' + str(args.start_iter) + '.pth'))
+    optimizer.load_state_dict(torch.load(
+        'optimizer_iter_' + str(args.start_iter) + '.pth'))
 
 # trainnig loop
 for i in tqdm(range(args.start_iter, args.max_iter)):
     # decay learning rate
     adjust_learning_rate(optimizer, iteration_count=i, lr_rate=args.lr,
-            lr_decay=args.lr_decay)
+                         lr_decay=args.lr_decay)
     # get input images
     content_images = next(content_iter).to(device)
     style_images = next(style_iter).to(device)
     # get losses for both images
-    loss_c, loss_s, l_identity1, l_identity2 = network(content_images, style_images)
-    loss_c = args.content_weight * loss_c # lambda_c * loss
-    loss_s = args.style_weight * loss_s # lambda_s *loss
-    loss = loss_c + loss_s + (l_identity1 * 50) + (l_identity2 * 1) # total loss, (50 and 1 are numbers proven to improve the results)
+    loss_c, loss_s, l_identity1, l_identity2 = network(
+        content_images, style_images)
+    loss_c = args.content_weight * loss_c  # lambda_c * loss
+    loss_s = args.style_weight * loss_s  # lambda_s *loss
+    # total loss, (50 and 1 are numbers proven to improve the results)
+    loss = loss_c + loss_s + (l_identity1 * 50) + (l_identity2 * 1)
 
-    optimizer.zero_grad() # reset gradients
-    loss.backward() # calculate gradients
-    optimizer.step() # next epoch
+    optimizer.zero_grad()  # reset gradients
+    loss.backward()  # calculate gradients
+    optimizer.step()  # next epoch
 
     # save models and optimizer states based on specificed interval (cuda makes this complicated)
     if (i + 1) % args.save_model_interval == 0 or (i + 1) == args.max_iter:
 
+        # create dir
+        os.system("mkdir " + args.save_dir)
+
         # delete all previously saved models except last one
-        for f in glob.glob('/kaggle/working/*.pth'):
+        for f in glob.glob(args.save_dir + '/*.pth'):
             if (f'{(i + 1) - 1000}') not in f:
                 os.remove(f)
 
@@ -118,7 +131,7 @@ for i in tqdm(range(args.start_iter, args.max_iter)):
             state_dict[key] = state_dict[key].to(torch.device('cpu'))
         torch.save(state_dict,
                    '{:s}/decoder_iter_{:d}.pth'.format(args.save_dir,
-                                                           i + 1))
+                                                       i + 1))
         state_dict = network.transform.state_dict()
         for key in state_dict.keys():
             state_dict[key] = state_dict[key].to(torch.device('cpu'))
@@ -128,4 +141,4 @@ for i in tqdm(range(args.start_iter, args.max_iter)):
         state_dict = optimizer.state_dict()
         torch.save(state_dict,
                    '{:s}/optimizer_iter_{:d}.pth'.format(args.save_dir,
-                                                           i + 1))
+                                                         i + 1))

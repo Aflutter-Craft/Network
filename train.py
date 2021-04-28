@@ -119,7 +119,8 @@ for i in tqdm(range(args.start_iter, args.max_iter)):
     if (i + 1) % args.save_model_interval == 0 or (i + 1) == args.max_iter:
 
         # create dir
-        os.system("mkdir " + args.save_dir)
+        if not os.path.exists(args.save_dir):
+            os.system("mkdir " + args.save_dir)
 
         # delete all previously saved models except last one
         for f in glob.glob(args.save_dir + '/*.pth'):

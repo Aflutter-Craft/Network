@@ -10,7 +10,7 @@ import torch.optim as optim
 import torch.utils.data as data
 import tqdm
 
-from models.net import *
+from net.net import *
 from utils.flat_dataset import FlatFolderDataset
 from utils.sampler import InfiniteSamplerWrapper
 from utils.utils import *
@@ -21,16 +21,17 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True  # Disable OSError: image file is truncat
 device = torch.device('cuda') # use GPU for training
 
 # argument parser (makes life easier)
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description="training arguments", prog="train")
+
 # Basic options
-parser.add_argument('--content_dir', type=str, default='/kaggle/temp/train2017',
+parser.add_argument('--content_dir', type=str, default='data/train2017',
                     help='Directory path to a batch of content images')
-parser.add_argument('--style_dir', type=str, default='/kaggle/temp/train',
+parser.add_argument('--style_dir', type=str, default='data/train',
                     help='Directory path to a batch of style images')
-parser.add_argument('--vgg', type=str, default='/kaggle/temp/vgg_normalized.pth')
+parser.add_argument('--vgg', type=str, default='pretrained/vgg.pth')
 
 # training options
-parser.add_argument('--save_dir', default='/kaggle/working',
+parser.add_argument('--save_dir', default='models',
                     help='Directory to save the model')
 parser.add_argument('--lr', type=float, default=1e-4)
 parser.add_argument('--lr_decay', type=float, default=5e-5)

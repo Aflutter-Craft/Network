@@ -2,6 +2,8 @@
 
 Image style transfer using a style attentional network.
 
+![](screens/2.png)
+
 ## Training
 
 - install requirements with `pip install -r requirements.txt`
@@ -24,7 +26,7 @@ Image style transfer using a style attentional network.
 
 ## Testing
 
-- run `test.py` with content and style arguments
+- run `test.py` with appropriate arguments
 
 ### Arguments
 
@@ -34,6 +36,13 @@ Image style transfer using a style attentional network.
 - `vgg` path to pretrained vgg model
 - `decoder` path to pretrained decoder
 - `transformer` path to pretrained transfomer model
+
+## More results
+
+Style interpolation (merging 2 styles)
+![](screens/1.png)
+
+![](screens/3.png)
 
 ## References
 

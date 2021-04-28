@@ -26,9 +26,9 @@ parser = argparse.ArgumentParser(
     description="training arguments", prog="train")
 
 # Basic options
-parser.add_argument('--content_dir', type=str, default='data/train2017',
+parser.add_argument('--content_dir', type=str, default='data/content',
                     help='Directory path to a batch of content images')
-parser.add_argument('--style_dir', type=str, default='data/train',
+parser.add_argument('--style_dir', type=str, default='data/style',
                     help='Directory path to a batch of style images')
 parser.add_argument('--vgg', type=str, default='pretrained/vgg.pth')
 

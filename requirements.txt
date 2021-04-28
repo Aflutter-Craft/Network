@@ -1,0 +1,5 @@
+pytorch
+torchvisison
+kaggle
+tqdm
+

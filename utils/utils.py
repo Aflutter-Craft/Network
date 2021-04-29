@@ -54,9 +54,9 @@ def train_transform():
 
 def download_data():
     """ Download the datasets """
+
     # create data directories
     os.system("mkdir -p data/content")
-    os.system("mkdir -p data/style")
 
     # download content images
     os.system(
@@ -64,6 +64,7 @@ def download_data():
     os.system("unzip -q data/train2017.zip -d data/content")
 
     # setup kaggle api and download
+    os.system("mkdir -p data/style")
     api = KaggleApi()
     api.authenticate()
     api.competition_download_file(competition='painter-by-numbers', file_name='train.zip',

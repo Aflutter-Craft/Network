@@ -1,11 +1,14 @@
+import os
+from pathlib import Path
+import urllib.request
+from zipfile import ZipFile
+
+from kaggle.api.kaggle_api_extended import KaggleApi
+import progressbar
 import torch
 from torchvision import transforms
-from kaggle.api.kaggle_api_extended import KaggleApi
-import os
 
 # calculate mean and standard deviation of features
-
-
 def calc_mean_std(feat, eps=1e-5):
     # eps is a small value added to the variance to avoid divide-by-zero.
     size = feat.size()
@@ -52,23 +55,34 @@ def train_transform():
     return transforms.Compose(transform_list)
 
 
+# progressbar for download
+pbar = None
+def show_progress(block_num, block_size, total_size):
+    global pbar
+    if pbar is None:
+        pbar = progressbar.ProgressBar(maxval=total_size)
+        pbar.start()
+
+    downloaded = block_num * block_size
+    if downloaded < total_size:
+        pbar.update(downloaded)
+    else:
+        pbar.finish()
+        pbar = None
+
 def download_data():
     """ Download the datasets """
-
-    # create data directories
-    os.system("mkdir -p data/content")
-
     # download content images
-    os.system(
-        "curl -C - http://images.cocodataset.org/zips/train2017.zip -o data/train2017.zip")
-    os.system("unzip -q data/train2017.zip -d data/content")
+    Path("data/content").mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve("http://images.cocodataset.org/zips/train2017.zip",
+            "data/train2017.zip", show_progress)
+    content = ZipFile("data/train2017.zip")
+    content.extractall(path="data/content")
 
-    # setup kaggle api and download
-    os.system("mkdir -p data/style")
+    # download style images from kaggle
+    Path("data/style").mkdir(parents=True, exist_ok=True)
     api = KaggleApi()
     api.authenticate()
-    api.competition_download_file(competition='painter-by-numbers', file_name='train.zip',
-                                  path='data')
-
-    # extract style images
-    os.system("unzip -q data/train.zip -d data/style")
+    api.competition_download_file('painter-by-numbers', 'train.zip', 'data')
+    style = ZipFile("data/train.zip")
+    style.extractall(path="data/style")

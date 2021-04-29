@@ -1,5 +1,5 @@
-pytorch
-torchvisison
+torch
+torchvision
 kaggle
 tqdm
 

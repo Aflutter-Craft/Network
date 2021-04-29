@@ -7,6 +7,7 @@ Image style transfer using a style attentional network.
 ## Training
 
 - install requirements with `pip install -r requirements.txt`
+- get your kaggle API key from [here](https://www.kaggle.com/docs/api)
 - start training with `python3 train.py`
 
 ### Arguments

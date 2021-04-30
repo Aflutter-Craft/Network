@@ -77,7 +77,7 @@ def download_data():
     urllib.request.urlretrieve("http://images.cocodataset.org/zips/train2017.zip",
             "data/train2017.zip", show_progress)
     content = ZipFile("data/train2017.zip")
-    content.extractall(path="data/content")
+    content.extractall(path="data")
 
     # download style images from kaggle
     Path("data/style").mkdir(parents=True, exist_ok=True)
@@ -85,4 +85,4 @@ def download_data():
     api.authenticate()
     api.competition_download_file('painter-by-numbers', 'train.zip', 'data')
     style = ZipFile("data/train.zip")
-    style.extractall(path="data/style")
+    style.extractall(path="data")

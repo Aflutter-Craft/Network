@@ -26,9 +26,9 @@ parser = argparse.ArgumentParser(
     description="training arguments", prog="train")
 
 # Basic options
-parser.add_argument('--content_dir', type=str, default='data/content/train2017',
+parser.add_argument('--content_dir', type=str, default='data/train2017',
                     help='Directory path to a batch of content images')
-parser.add_argument('--style_dir', type=str, default='data/style/train',
+parser.add_argument('--style_dir', type=str, default='data/train',
                     help='Directory path to a batch of style images')
 parser.add_argument('--vgg', type=str, default='pretrained/vgg.pth')
 
@@ -46,7 +46,7 @@ parser.add_argument('--save_model_interval', type=int, default=1000)
 parser.add_argument('--start_iter', type=float, default=0)
 
 # make sure the datasets have been downloaded
-if (not os.path.exists("data/content") or not os.path.exists("data/style")):
+if (not os.path.exists("data/train2017") or not os.path.exists("data/train")):
     print("Downloading Data...")
     download_data()
 

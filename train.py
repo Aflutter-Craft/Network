@@ -8,7 +8,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data as data
-import tqdm
+from tqdm import tqdm
 
 from net.net import *
 from utils.flat_dataset import FlatFolderDataset

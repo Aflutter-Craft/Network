@@ -118,6 +118,7 @@ class SANet(nn.Module):
         out += content_feat
         return out
 
+
 # style attentional network (figure 2(a))
 class StyleAttentionalNet(nn.Module):
     def __init__(self, in_dim):
@@ -128,12 +129,8 @@ class StyleAttentionalNet(nn.Module):
         self.merge_conv_pad = nn.ReflectionPad2d((1, 1, 1, 1))
         self.merge_conv = nn.Conv2d(in_dim, in_dim, (3, 3))
     def forward(self, content4_1, style4_1, content5_1, style5_1):
-       out4_1 = self.sanet4_1(content4_1, style4_1)
-       out5_1 = self.sanet5_1(content5_1, style5_1)
-       out5_1 = self.upsample5_1(out5_1)
-       out = self.merge_conv_pad(out4_1, out5_1)
-       out = self.merge_conv(out)
-       return out
+        return self.merge_conv(self.merge_conv_pad(self.sanet4_1(content4_1, style4_1) + self.upsample5_1(self.sanet5_1(content5_1, style5_1))))
+
 
 # full network architecture (figure 2(a))
 class Net(nn.Module):

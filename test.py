@@ -7,7 +7,7 @@ from torchvision.utils import save_image
 from utils.utils import train_transform
 from net.net import *
 
-device = torch.device('cuda')  # use GPU for training
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # type: ignore
 
 parser = argparse.ArgumentParser()
 

@@ -19,7 +19,7 @@ cudnn.benchmark = True  # benchmark mode is faster
 Image.MAX_IMAGE_PIXELS = None  # Disable DecompressionBombError
 # Disable OSError: image file is truncated
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-device = torch.device('cuda')  # use GPU for training
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # type: ignore
 
 # argument parser (makes life easier)
 parser = argparse.ArgumentParser(

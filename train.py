@@ -64,7 +64,7 @@ vgg.load_state_dict(torch.load(args.vgg))  # load pretrained vgg network
 vgg = nn.Sequential(*list(vgg.children())[:44])  # extract layers until relu5_1
 
 # create and config main net
-network = Net(vgg, decoder, args.start_iter)
+network = Net(vgg, decoder, args.start_iter, args.save_dir)
 network.train()  # set network to training mode
 network.to(device)  # move network to GPU
 

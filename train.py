@@ -19,7 +19,8 @@ cudnn.benchmark = True  # benchmark mode is faster
 Image.MAX_IMAGE_PIXELS = None  # Disable DecompressionBombError
 # Disable OSError: image file is truncated
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # type: ignore
+device = torch.device('cuda' if torch.cuda.is_available()  # type: ignore
+                      else 'cpu')
 
 # argument parser (makes life easier)
 parser = argparse.ArgumentParser(
@@ -92,8 +93,8 @@ optimizer = optim.Adam([
 
 # load optimizer state if not training from the begining
 if(args.start_iter > 0):
-    optimizer.load_state_dict(torch.load(
-        'optimizer_iter_' + str(args.start_iter) + '.pth'))
+    optimizer.load_state_dict(torch.load(args.save_dir +
+                                         '/optimizer_iter_' + str(args.start_iter) + '.pth'))
 
 # trainnig loop
 for i in tqdm(range(args.start_iter, args.max_iter)):
@@ -130,16 +131,12 @@ for i in tqdm(range(args.start_iter, args.max_iter)):
         state_dict = decoder.state_dict()
         for key in state_dict.keys():
             state_dict[key] = state_dict[key].to(torch.device('cpu'))
-        torch.save(state_dict,
-                   '{:s}/decoder_iter_{:d}.pth'.format(args.save_dir,
-                                                       i + 1))
+        torch.save(state_dict, f'{args.save_dir}/decoder_iter_{i + 1}.pth')
+
         state_dict = network.transform.state_dict()
         for key in state_dict.keys():
             state_dict[key] = state_dict[key].to(torch.device('cpu'))
-        torch.save(state_dict,
-                   '{:s}/transformer_iter_{:d}.pth'.format(args.save_dir,
-                                                           i + 1))
+        torch.save(state_dict, f'{args.save_dir}/transformer_iter_{i + 1}.pth')
+
         state_dict = optimizer.state_dict()
-        torch.save(state_dict,
-                   '{:s}/optimizer_iter_{:d}.pth'.format(args.save_dir,
-                                                         i + 1))
+        torch.save(state_dict, f'{args.save_dir}/optimizer_iter_{i + 1}.pth')

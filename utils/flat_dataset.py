@@ -3,6 +3,7 @@ import os
 from PIL import Image
 import torch.utils.data as data
 
+
 # custom data loader for images
 class FlatFolderDataset(data.Dataset):
     def __init__(self, root, transform):

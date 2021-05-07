@@ -1,6 +1,7 @@
 import numpy as np
 from torch.utils import data
 
+
 # data sampler (used for retreving images during training)
 def InfiniteSampler(n):
     i = n - 1

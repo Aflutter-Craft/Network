@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import urllib.request
 from zipfile import ZipFile
@@ -7,6 +6,7 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 import progressbar
 import torch
 from torchvision import transforms
+
 
 # calculate mean and standard deviation of features
 def calc_mean_std(feat, eps=1e-5):
@@ -57,6 +57,8 @@ def train_transform():
 
 # progressbar for download
 pbar = None
+
+
 def show_progress(block_num, block_size, total_size):
     global pbar
     if pbar is None:
@@ -70,12 +72,13 @@ def show_progress(block_num, block_size, total_size):
         pbar.finish()
         pbar = None
 
+
 def download_data():
     """ Download the datasets """
     # download content images
     Path("data/content").mkdir(parents=True, exist_ok=True)
     urllib.request.urlretrieve("http://images.cocodataset.org/zips/train2017.zip",
-            "data/train2017.zip", show_progress)
+                               "data/train2017.zip", show_progress)
     content = ZipFile("data/train2017.zip")
     content.extractall(path="data")
 

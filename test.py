@@ -7,7 +7,8 @@ from torchvision.utils import save_image
 from utils.utils import train_transform
 from net.net import *
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # type: ignore
+device = torch.device('cuda' if torch.cuda.is_available()  # type: ignore
+                      else 'cpu')
 
 parser = argparse.ArgumentParser()
 

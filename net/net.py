@@ -92,9 +92,8 @@ vgg_arch = nn.Sequential(
     nn.ReLU()  # relu5-4
 )
 
+
 # self attention module (Figure 3)
-
-
 class SANet(nn.Module):
     def __init__(self, in_dim):
         super(SANet, self).__init__()
@@ -166,7 +165,7 @@ class Net(nn.Module):
     def encode_with_intermediate(self, input):
         results = [input]
         for i in range(5):
-            func = getattr(self, 'enc_{:d}'.format(i + 1))
+            func = getattr(self, f'enc_{i + 1}')
             results.append(func(results[-1]))
         return results[1:]
 

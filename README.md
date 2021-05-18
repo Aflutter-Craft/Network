@@ -2,7 +2,7 @@
 
 Image style transfer using a style attentional network.
 
-![](screens/2.png)
+![](screens/1.png)
 
 ## Training
 
@@ -40,10 +40,7 @@ Image style transfer using a style attentional network.
 
 ## More results
 
-Style interpolation (merging 2 styles)
-![](screens/1.png)
-
-![](screens/3.png)
+![](screens/2.png)
 
 ## References
 
